@@ -1,0 +1,159 @@
+1
+00:00:00,084 --> 00:00:05,000
+AURO SOLUTION DEMONSTRATION -APPLIED TO SEED 01
+
+2
+00:00:05,010 --> 00:00:10,000
+The terminal command to launch the solution is:
+ros2  launch solution solution_nav2_launch.py
+
+3
+00:00:10,010 --> 00:00:15,000
+My solution involves a two-robot collaborative system. The objective is to replace a nearby red item with a blue one, which will spawn it closer and reduce the time it takes to collect
+blues in the long run while maximizing score.
+
+4
+00:00:15,010 --> 00:00:20,000
+The robots work together to locate a blue item with an unknown position
+by setting custom waypoints, inspired by virtual pheromones in swarm robotics.
+
+5
+00:00:20,010 --> 00:00:25,000
+Initially, the target item is red. Once a red item is spotted
+using camera vision, the robot determines its next action.
+
+6
+00:00:25,010 --> 00:00:30,000
+In this case, both robots adjusts their velocity to approach the red items.
+
+7
+00:00:30,010 --> 00:00:35,000
+When the robot gets close enough that it can no longer detect the item,
+it moves onwards and checks if it has collected the desired item.
+
+8
+00:00:37,097 --> 00:00:42,097
+Robot 2 has approached red and will move onward to collect it
+
+9
+00:00:42,100 --> 00:00:47,097
+Once both robots have collected a red item, they set their next target - a blue item to swap with the red one.
+
+10
+00:00:47,100 --> 00:00:52,097
+Robot1 is struggling to find a blue. It uses vision to avoid greens if it gets too close.
+If no blues are seen robots search - moving forward, turning or scanning in place
+to look for the target item.
+
+11
+00:00:52,100 --> 00:00:57,097
+To shorten the time taken to search for a blue item, the robots communicate via waypoints / item marks
+
+12
+00:00:57,100 --> 00:01:02,097
+Robot2 has found a blue and will publish a waypoint. Meanwhile Robot1 continues to look for a blue. Looks like Robot1 has received the waypoint. It will now navigate to the robot1 pose to
+collect a blue instead of blindly searching.
+
+13
+00:01:02,100 --> 00:01:07,097
+This significantly reduces the time it takes for each robot to find a blue item
+
+14
+00:01:07,100 --> 00:01:12,097
+While Robot1 navigates to the waypoint, Robot2 has already
+collected the blue. It will now start navigating back to home.
+
+15
+00:01:12,100 --> 00:01:17,097
+The return coordinates are updated to align with the Y-coordinate where the red item was collected. This ensures the robot returns home near the newly swapped blue.
+
+16
+00:01:17,100 --> 00:01:22,097
+During navigation, a robot must avoid all other items to ensure proper swapping.
+
+17
+00:01:22,100 --> 00:01:27,097
+A custom node manipulates the lidar data with items detected via vision so that
+the robot can detect and avoid items as obstacles on the map while using nav2.
+
+18
+00:01:27,100 --> 00:01:32,097
+You can see items appear as obstacles on the map in RVizz
+for Robot1.
+
+19
+00:01:32,100 --> 00:01:37,097
+There are cases where it does not detect in time such as when an item is too close.
+Hence, as a failsafe, the Robot1  pauses until the item is swapped back in place.
+
+20
+00:02:04,100 --> 00:02:09,034
+Robot1 however, successfully manages to detect the red cluster
+in the middle lane and replans a path to avoid them as shown in RVizz.
+
+21
+00:02:14,100 --> 00:02:19,034
+Unlike returning home/waypoints - Item collection and searching is done
+without Nav2. Greens are avoided. Static obstacles are avoided by turning once
+LIDAR scan thresholds are breached.
+
+22
+00:02:19,100 --> 00:02:24,034
+To prevent deadlocks when turning randomly,
+my solution remembers the previous turn angle, ensuring continuous turns.
+
+23
+00:02:24,100 --> 00:02:28,034
+Once the robots reach the home zone,
+the blue item has swapped with the initial red and is now closer to home.
+
+24
+00:02:40,020 --> 00:02:45,020
+The robots know via the item log that a blue has been collected. They set their
+target to blue and scan their surroundings until they detect a nearby blue item, which
+they then collect and return home.
+
+25
+00:02:47,045 --> 00:02:52,045
+Robot2 now collects the closest blue
+
+26
+00:03:17,084 --> 00:03:22,084
+Both robots now have a blue close by and will simply
+collect and return with the closest blue.
+
+27
+00:03:34,000 --> 00:03:39,000
+By design this process now repeats, with the robots spending less time finding a blue item,
+thus minimizing the time taken to find and collect a blue (the highest valued item)
+while maximizing score for 2 robots
+
+28
+00:03:44,072 --> 00:03:49,072
+There are minor inconsistencies though. Due to how clustered the reds are close to each other
+and the blue spawning at a random point sometimes Robots will drop the item and pause
+
+29
+00:03:49,100 --> 00:03:52,072
+Similarly, if blue spawns behind a red then the target is dynamically updated to red.
+After which robot collects a nearly blue again.
+
+30
+00:03:59,039 --> 00:04:04,039
+Despite this, the time taken to collect blue and
+maximization of scores is significantly reduced overall.
+
+31
+00:04:09,039 --> 00:04:14,039
+This solution's strength lies in its ability to swap with a nearby red
+and collaboratively locate a blue cluster in less time using waypoints.
+
+32
+00:04:14,100 --> 00:04:19,039
+After this time consuming initial swap it is smooth sailing
+as the time taken to find a blue is significantly and consistently reduced.
+
+33
+00:04:19,100 --> 00:04:24,039
+While this does not represent reality it takes advantage of the
+simulation by applying a creative strategy
