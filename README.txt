@@ -1,5 +1,9 @@
 READ ME:
 AURO INDIVIDUAL ASSESSMENT:
+- Go to solution > solution to find ros nodes and controllers
+- Project report found in report section
+
+HOW TO RUN FILES:
 
 Ensure no files/folders in your home directory are named auro_ws
 If so, please rename them accordingly.
